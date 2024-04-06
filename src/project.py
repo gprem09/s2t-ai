@@ -23,9 +23,10 @@ def load_ground_truths(metadata_path):
 
 def transcribe_audio_files(model_path, audio_dir, metadata_path):
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-    config = Wav2Vec2Config.from_pretrained("facebook/wav2vec2-base-960h")
-    model = Wav2Vec2ForCTC(config)
-    model.load_state_dict(torch.load(model_path))
+    #config = Wav2Vec2Config.from_pretrained("facebook/wav2vec2-base-960h")
+    #model = Wav2Vec2ForCTC(config)
+    #model.load_state_dict(torch.load(model_path))
+    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
     model.eval()
 
     ground_truths = load_ground_truths(metadata_path)
