@@ -2,7 +2,7 @@ import torch
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC, Wav2Vec2Config
 import librosa
 
-model_path = '/Users/gprem/Desktop/s2t-ai/src/default.pt'
+model_path = '/Users/gprem/Desktop/s2t-ai/src/data/default.pt'
 audio_input = '/Users/gprem/Desktop/s2t-ai/dataset/wavs/LJ001-0001.wav'
 
 processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
