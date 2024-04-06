@@ -20,7 +20,7 @@ def load_ground_truths(metadata_path):
            ground_truths[filename] = transcript
    return ground_truths
 
-def transcribe_and_compute_bleu(model_path, audio_dir, metadata_path):
+def compute_bleu(model_path, audio_dir, metadata_path):
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
     config = Wav2Vec2Config.from_pretrained("facebook/wav2vec2-base-960h")
     model = Wav2Vec2ForCTC(config)
@@ -54,5 +54,5 @@ model_path = '/Users/gprem/Desktop/s2t-ai/src/data/default.pt'
 audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
 metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
 
-average_bleu_score = transcribe_and_compute_bleu(model_path, audio_dir, metadata_path)
+average_bleu_score = compute_bleu(model_path, audio_dir, metadata_path)
 print(f"BLEU Score: {average_bleu_score}")
