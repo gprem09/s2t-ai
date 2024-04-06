@@ -47,7 +47,7 @@ def compute_bleu(model_path, audio_dir, metadata_path):
         score = sentence_bleu([reference_tokens], candidate_tokens)
         scores.append(score)
     
-    average_bleu_score = np.mean(scores)
+    average_bleu_score = np.mean(scores) * 100
     return average_bleu_score
 
 model_path = '/Users/gprem/Desktop/s2t-ai/src/data/default.pt'
