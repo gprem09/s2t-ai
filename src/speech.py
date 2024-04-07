@@ -41,7 +41,7 @@ def capture_live_audio():
 
     return audio_data, audio.sample_rate
 
-def main():
+if __name__ == "__main__":
     try:
         while True:
             audio_data, sample_rate = capture_live_audio()
@@ -49,6 +49,3 @@ def main():
             print("Text:", transcription)
     except KeyboardInterrupt:
         print("\nExiting transcription loop.")
-
-if __name__ == "__main__":
-    main()
