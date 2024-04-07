@@ -6,7 +6,7 @@ from tqdm import tqdm
 from dataset import load_ljspeech_data
 from torch.nn.utils.rnn import pad_sequence
 
-dataset_dir = r"C:\Users\gpa21\Downloads\s2t-ai\dataset"
+dataset_dir = "/Users/gprem/Desktop/s2t-ai/dataset"
 model_name = "facebook/wav2vec2-large-960h-lv60-self"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 4

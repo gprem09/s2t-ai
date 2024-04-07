@@ -8,7 +8,6 @@ from nltk.translate.bleu_score import sentence_bleu
 from nltk import word_tokenize
 import numpy as np
 from bleu import compute_bleu
-import os
 
 # nltk.download('punkt')
 
@@ -49,7 +48,7 @@ def transcribe_audio_files(model_path, audio_dir, metadata_path):
     compute_bleu(list(ground_truths.values()), predictions)
 
 model_path = '/Users/gprem/Desktop/s2t-ai/src/data/default.pt'
-audio_dir = Path(r'C:\Users\gpa21\Downloads\s2t-ai\dataset\wavs')
-metadata_path = r'C:\Users\gpa21\Downloads\s2t-ai\dataset\metadata.csv'
+audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
+metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
 
 transcribe_audio_files(model_path, audio_dir, metadata_path)
