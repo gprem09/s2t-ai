@@ -1,6 +1,7 @@
 import speech_recognition as sr
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 import torch
+import torchaudio
 from torchaudio.transforms import Resample
 import numpy as np
 
@@ -28,22 +29,26 @@ def transcribe_audio_with_wav2vec(audio_data, sample_rate):
 def capture_live_audio():
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Calibrating microphone... DONT TALK")
+        print("Calibrating microphone... SILENT!")
         recognizer.adjust_for_ambient_noise(source, duration=5)
-        print("Calibration complete. SPEAK NOW!")
+        print("Calibration complete. SPEAK!")
         audio = recognizer.listen(source)
-        print("Recording stopped. Processing...")
+        print("Recording stopped.")
 
     audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
     audio_data = torch.from_numpy(audio_data).float() / 32768.0
-    audio_data = audio_data.unsqueeze(0) 
+    audio_data = audio_data.unsqueeze(0)
 
     return audio_data, audio.sample_rate
 
 def main():
-    audio_data, sample_rate = capture_live_audio()
-    transcription = transcribe_audio_with_wav2vec(audio_data, sample_rate)
-    print("Text:", transcription)
+    try:
+        while True:
+            audio_data, sample_rate = capture_live_audio()
+            transcription = transcribe_audio_with_wav2vec(audio_data, sample_rate)
+            print("Text:", transcription)
+    except KeyboardInterrupt:
+        print("\nExiting transcription loop.")
 
 if __name__ == "__main__":
     main()
