@@ -8,6 +8,8 @@ from nltk.translate.bleu_score import sentence_bleu
 from nltk import word_tokenize
 import numpy as np
 from bleu import compute_bleu
+import transformers
+transformers.logging.set_verbosity_error()
 
 # nltk.download('punkt')
 
