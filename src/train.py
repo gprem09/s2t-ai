@@ -12,7 +12,6 @@ batch_size = 4
 epochs = 3
 learning_rate = 1e-5
 
-# Load processor and dataset
 processor = Wav2Vec2Processor.from_pretrained(model_name)
 dataset = load_ljspeech_data(dataset_dir, processor, num_examples=3600)
 
