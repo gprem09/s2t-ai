@@ -51,7 +51,7 @@ class LiveAudioTranscriber:
                 audio_data = torch.from_numpy(audio_data).float() / 32768.0
                 audio_data = audio_data.unsqueeze(0)
                 transcription = self.audio_processor.transcribe(audio_data, audio.sample_rate)
-                print("Text:", transcription.lower())
+                print(transcription.lower())
 
 if __name__ == "__main__":
     try:
