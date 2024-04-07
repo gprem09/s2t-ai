@@ -41,7 +41,7 @@ def capture_live_audio():
             audio_data = audio_data.unsqueeze(0)
 
             transcription = transcribe_audio_with_wav2vec(audio_data, audio.sample_rate)
-            print("s2t:", transcription)
+            print("s2t:", transcription.lower())
 
 if __name__ == "__main__":
     try:
