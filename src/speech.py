@@ -4,6 +4,8 @@ import torch
 import torchaudio
 from torchaudio.transforms import Resample
 import numpy as np
+import transformers
+transformers.logging.set_verbosity_error()
 
 def transcribe_audio_with_wav2vec(audio_data, sample_rate):
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
@@ -35,7 +37,7 @@ def capture_live_audio():
         audio = recognizer.listen(source)
         print("Recording stopped.")
 
-    audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16)
+    audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16).copy()
     audio_data = torch.from_numpy(audio_data).float() / 32768.0
     audio_data = audio_data.unsqueeze(0)
 
