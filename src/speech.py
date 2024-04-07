@@ -47,4 +47,4 @@ if __name__ == "__main__":
     try:
         capture_live_audio()
     except KeyboardInterrupt:
-        print("\nExiting transcription loop.")
+        print("\nexit")
