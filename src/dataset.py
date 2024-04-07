@@ -4,9 +4,13 @@ from datasets import Dataset
 from transformers import Wav2Vec2Processor
 import soundfile as sf
 
-def load_ljspeech_data(dataset_dir: str, processor: Wav2Vec2Processor):
+def load_ljspeech_data(dataset_dir: str, processor: Wav2Vec2Processor, num_examples: int = None):
     metadata_path = os.path.join(dataset_dir, "metadata.csv")
     metadata = pd.read_csv(metadata_path, sep='|', header=None, names=['filename', 'transcription', 'normalized_transcription'])
+
+    # Optionally select a subset of the data
+    if num_examples is not None:
+        metadata = metadata.head(num_examples)
 
     def preprocess_function(examples):
         # print(f"Transcriptions: {examples['normalized_transcription'][:5]}")
