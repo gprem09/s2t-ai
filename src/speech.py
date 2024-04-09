@@ -11,24 +11,14 @@ def transcribe_audio_with_wav2vec(audio_data, sample_rate):
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
     model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
     model.eval()
-
-    # if the audio has more than one channel
     if audio_data.size(0) > 1:
         audio_data = audio_data[0, :].unsqueeze(0)
-
-    # the audio to 16 kHz
     if sample_rate != 16000:
         resampler = Resample(orig_freq=sample_rate, new_freq=16000)
         audio_data = resampler(audio_data)
-
-    # process the audio
     inputs = processor(audio_data.squeeze(), return_tensors="pt", sampling_rate=16000)
-
-    # perform inference
     with torch.no_grad():
         logits = model(inputs.input_values).logits
-
-    # decode 
     predicted_ids = torch.argmax(logits, dim=-1)
     transcription = processor.decode(predicted_ids[0], skip_special_tokens=True)
 
