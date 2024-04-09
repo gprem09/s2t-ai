@@ -8,7 +8,6 @@ def load_ljspeech_data(dataset_dir: str, processor: Wav2Vec2Processor, num_examp
     metadata_path = os.path.join(dataset_dir, "metadata.csv")
     metadata = pd.read_csv(metadata_path, sep='|', header=None, names=['filename', 'transcription', 'normalized_transcription'])
 
-    # Optionally select a subset of the data
     if num_examples is not None:
         metadata = metadata.head(num_examples)
 
