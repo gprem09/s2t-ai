@@ -5,6 +5,7 @@ import torchaudio
 from torchaudio.transforms import Resample
 import numpy as np
 import transformers
+import jiwer
 transformers.logging.set_verbosity_error()
 
 class AudioTranscriber:
@@ -26,26 +27,26 @@ class AudioTranscriber:
         transcription = self.processor.decode(predicted_ids[0], skip_special_tokens=True)
         return transcription.lower()
 
-class LiveAudioCapture:    
+class LiveAudioCapture:
     def __init__(self, transcriber):
         self.transcriber = transcriber
         self.recognizer = sr.Recognizer()
 
     def capture_and_transcribe(self):
         with sr.Microphone() as source:
-            print("Checking for microphone... SILENCE!")
+            print("Checking for microphone... Please remain silent!")
             self.recognizer.adjust_for_ambient_noise(source, duration=5)
-            print("TALK!")
+            print("Speak now!")
             while True:
-                try:
-                    audio = self.recognizer.listen(source)
-                    audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16).copy()
-                    audio_data = torch.from_numpy(audio_data).float() / 32768.0
-                    audio_data = audio_data.unsqueeze(0)
-                    transcription = self.transcriber.transcribe(audio_data, audio.sample_rate)
-                    print(transcription)
-                except Exception as e:
-                    print(f"Error transcribing audio: {e}")
+                audio = self.recognizer.listen(source)
+                audio_data = np.frombuffer(audio.get_raw_data(), dtype=np.int16).copy()
+                audio_data = torch.from_numpy(audio_data).float() / 32768.0
+                audio_data = audio_data.unsqueeze(0)
+                transcription = self.transcriber.transcribe(audio_data, audio.sample_rate)
+                print("Transcription:", transcription)
+                ground_truth = "This is a test to see if the transcription is accurate"
+                error = jiwer.wer(ground_truth, transcription)
+                print(f"Word Error Rate: {error:.2%}")
 
 if __name__ == "__main__":
     model_path = '/Users/gprem/Desktop/s2t-ai/src/data/model'
