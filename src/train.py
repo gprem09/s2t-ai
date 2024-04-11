@@ -13,9 +13,9 @@ epochs = 3
 learning_rate = 1e-5
 
 processor = Wav2Vec2Processor.from_pretrained(model_name)
-dataset = load_ljspeech_data(dataset_dir, processor, num_examples=3600)
+dataset = load_ljspeech_data(dataset_dir, processor, num_examples=5000)
 
-subset_size = 3600
+subset_size = 5000
 subset_dataset, _ = random_split(dataset, [subset_size, len(dataset) - subset_size])
 
 train_size = int(0.8 * len(subset_dataset))
