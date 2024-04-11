@@ -162,3 +162,5 @@ cython_debug/
 .DS_Store
 dataset/wavs/
 src/data/*.pt
+src/data/model/
+src/data/processor/

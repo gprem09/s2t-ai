@@ -8,21 +8,20 @@ import transformers
 import re
 transformers.logging.set_verbosity_error()
 
+finetuned_model = '/Users/gprem/Desktop/s2t-ai/src/data/model'
+finetuned_processor = '/Users/gprem/Desktop/s2t-ai/src/data/processor'
+
 def sentence_correction(text):
     text = text.strip().lower()
-
     def capitalize_sentence(m):
         return m.group(0).capitalize()
-
     text = re.sub(r'(?:^|(?<=\.\s))(?P<first_letter>[a-z])', capitalize_sentence, text)
     text = re.sub(r'(?<!\.)\Z', '.', text)
-
     return text
 
-
 def transcribe_and_save(audio_dir, metadata_path, output_file):
-    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-    model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+    processor = Wav2Vec2Processor.from_pretrained(finetuned_processor)
+    model = Wav2Vec2ForCTC.from_pretrained(finetuned_model)
     model.eval()
 
     ground_truths = {}
