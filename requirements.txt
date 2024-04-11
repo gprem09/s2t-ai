@@ -11,3 +11,4 @@ soundfile
 nltk
 datasets
 PyAudio
+jiwer
