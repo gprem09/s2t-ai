@@ -10,3 +10,4 @@ pandas
 soundfile
 nltk
 datasets
+PyAudio
