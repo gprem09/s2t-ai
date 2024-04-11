@@ -1,11 +1,24 @@
 import torch
-import transformers
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
 import librosa
 from pathlib import Path
 from tqdm import tqdm
 import json
+import transformers
+import re
 transformers.logging.set_verbosity_error()
+
+def sentence_correction(text):
+    text = text.strip().lower()
+
+    def capitalize_sentence(m):
+        return m.group(0).capitalize()
+
+    text = re.sub(r'(?:^|(?<=\.\s))(?P<first_letter>[a-z])', capitalize_sentence, text)
+    text = re.sub(r'(?<!\.)\Z', '.', text)
+
+    return text
+
 
 def transcribe_and_save(audio_dir, metadata_path, output_file):
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
@@ -20,7 +33,7 @@ def transcribe_and_save(audio_dir, metadata_path, output_file):
             parts = line.strip().split('|')
             filename = parts[0]
             transcript = parts[2]
-            ground_truths[filename] = transcript
+            ground_truths[filename] = sentence_correction(transcript)
 
     for filename, transcript in tqdm(ground_truths.items(), desc="Transcribing", unit="file"):
         audio_path = audio_dir / f"{filename}.wav"
@@ -29,14 +42,14 @@ def transcribe_and_save(audio_dir, metadata_path, output_file):
         except Exception as e:
             print(f"Error loading {audio_path}: {e}")
             continue
-        
+
         input_values = processor(audio, return_tensors="pt", sampling_rate=16000).input_values
         with torch.no_grad():
             logits = model(input_values).logits
         predicted_ids = torch.argmax(logits, dim=-1)
         transcription = processor.batch_decode(predicted_ids)[0]
 
-        predictions[filename] = transcription
+        predictions[filename] = sentence_correction(transcription)
 
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(predictions, f, ensure_ascii=False, indent=4)
@@ -45,6 +58,6 @@ def transcribe_and_save(audio_dir, metadata_path, output_file):
 
 audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
 metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
-output_file = 'transcriptions.json'
+output_file = 'transcriptions_finetuned.json'
 
 transcribe_and_save(audio_dir, metadata_path, output_file)
