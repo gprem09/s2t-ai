@@ -35,7 +35,7 @@ def transcribe_and_save(audio_dir, metadata_path, output_file):
             transcript = parts[2]
             ground_truths[filename] = sentence_correction(transcript)
 
-    for filename, transcript in tqdm(ground_truths.items(), desc="Transcribing", unit="file"):
+    for filename, transcript in tqdm(list(ground_truths.items())[:50], desc="Transcribing", unit="file"):
         audio_path = audio_dir / f"{filename}.wav"
         try:
             audio, _ = librosa.load(audio_path, sr=16000)
