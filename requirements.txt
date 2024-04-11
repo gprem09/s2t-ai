@@ -12,3 +12,4 @@ nltk
 datasets
 PyAudio
 jiwer
+sacrebleu
