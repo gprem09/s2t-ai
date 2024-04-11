@@ -14,6 +14,6 @@ def load_data_and_compute_bleu(metadata_path, transcriptions_file):
     bleu(gt_list, pred_list)
 
 metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
-transcriptions_file = 'transcriptions.json'
+transcriptions_file = 'transcriptions_finetuned.json'
 
 load_data_and_compute_bleu(metadata_path, transcriptions_file)
