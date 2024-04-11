@@ -44,9 +44,11 @@ class LiveAudioCapture:
                 audio_data = audio_data.unsqueeze(0)
                 transcription = self.transcriber.transcribe(audio_data, audio.sample_rate)
                 print("Transcription:", transcription)
-                ground_truth = "This is a test to see if the transcription is accurate"
-                error = jiwer.wer(ground_truth, transcription)
-                print(f"Word Error Rate: {error:.2%}")
+                # ground_truth = "This is a test to see if the transcription is accurate"
+                # error = jiwer.wer(ground_truth, transcription)
+                # print(f"Word Error Rate: {error:.2%}")
+                # cer = jiwer.cer(ground_truth, transcription)
+                # print(f"Character Error Rate: {cer:.2%}")
 
 if __name__ == "__main__":
     model_path = '/Users/gprem/Desktop/s2t-ai/src/data/model'
