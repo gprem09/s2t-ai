@@ -1,62 +1,69 @@
 import torch
+import re
+import json
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
-import librosa
 from pathlib import Path
 from tqdm import tqdm
-import json
+import librosa
 import transformers
-import re
 transformers.logging.set_verbosity_error()
 
-finetuned_model = '/Users/gprem/Desktop/s2t-ai/src/data/model'
-finetuned_processor = '/Users/gprem/Desktop/s2t-ai/src/data/processor'
+class TextFormatter:
+    @staticmethod
+    def correct_sentence(text):
+        text = text.strip().lower()
 
-def sentence_correction(text):
-    text = text.strip().lower()
-    def capitalize_sentence(m):
-        return m.group(0).capitalize()
-    text = re.sub(r'(?:^|(?<=\.\s))(?P<first_letter>[a-z])', capitalize_sentence, text)
-    text = re.sub(r'(?<!\.)\Z', '.', text)
-    return text
+        def capitalize_sentence(m):
+            return m.group(0).capitalize()
 
-def transcribe_and_save(audio_dir, metadata_path, output_file):
-    processor = Wav2Vec2Processor.from_pretrained(finetuned_processor)
-    model = Wav2Vec2ForCTC.from_pretrained(finetuned_model)
-    model.eval()
+        text = re.sub(r'(?:^|(?<=\.\s))(?P<first_letter>[a-z])', capitalize_sentence, text)
+        text = re.sub(r'(?<!\.)\Z', '.', text)
+        return text
 
-    ground_truths = {}
-    predictions = {}
+class Transcriber:
+    def __init__(self, model_path, processor_path):
+        self.processor = Wav2Vec2Processor.from_pretrained(processor_path)
+        self.model = Wav2Vec2ForCTC.from_pretrained(model_path)
+        self.model.eval()
 
-    with open(metadata_path, 'r', encoding='utf-8') as file:
-        for line in file:
-            parts = line.strip().split('|')
-            filename = parts[0]
-            transcript = parts[2]
-            ground_truths[filename] = sentence_correction(transcript)
+    def transcribe(self, audio_dir, metadata_path, output_file):
+        ground_truths = {}
+        predictions = {}
 
-    for filename, transcript in tqdm(list(ground_truths.items())[:50], desc="Transcribing", unit="file"):
-        audio_path = audio_dir / f"{filename}.wav"
-        try:
-            audio, _ = librosa.load(audio_path, sr=16000)
-        except Exception as e:
-            print(f"Error loading {audio_path}: {e}")
-            continue
+        with open(metadata_path, 'r', encoding='utf-8') as file:
+            for line in file:
+                parts = line.strip().split('|')
+                filename = parts[0]
+                transcript = parts[2]
+                ground_truths[filename] = TextFormatter.correct_sentence(transcript)
 
-        input_values = processor(audio, return_tensors="pt", sampling_rate=16000).input_values
-        with torch.no_grad():
-            logits = model(input_values).logits
-        predicted_ids = torch.argmax(logits, dim=-1)
-        transcription = processor.batch_decode(predicted_ids)[0]
+        for filename, transcript in tqdm(list(ground_truths.items())[:50], desc="Transcribing", unit="file"):
+            audio_path = audio_dir / f"{filename}.wav"
+            try:
+                audio, _ = librosa.load(audio_path, sr=16000)
+            except Exception as e:
+                print(f"Error loading {audio_path}: {e}")
+                continue
 
-        predictions[filename] = sentence_correction(transcription)
+            input_values = self.processor(audio, return_tensors="pt", sampling_rate=16000).input_values
+            with torch.no_grad():
+                logits = self.model(input_values).logits
+            predicted_ids = torch.argmax(logits, dim=-1)
+            transcription = self.processor.batch_decode(predicted_ids)[0]
 
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(predictions, f, ensure_ascii=False, indent=4)
+            predictions[filename] = TextFormatter.correct_sentence(transcription)
 
-    print("Transcriptions saved to:", output_file)
+        with open(output_file, 'w', encoding='utf-8') as f:
+            json.dump(predictions, f, ensure_ascii=False, indent=4)
 
-audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
-metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
-output_file = 'transcriptions_finetuned.json'
+        print("Transcriptions saved to:", output_file)
 
-transcribe_and_save(audio_dir, metadata_path, output_file)
+if __name__ == "__main__":
+    model_path = '/Users/gprem/Desktop/s2t-ai/src/data/model'
+    processor_path = '/Users/gprem/Desktop/s2t-ai/src/data/processor'
+    audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
+    metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
+    output_file = 'transcriptions_finetuned.json'
+    
+    transcriber = Transcriber(model_path, processor_path)
+    transcriber.transcribe(audio_dir, metadata_path, output_file)
