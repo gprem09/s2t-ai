@@ -3,16 +3,6 @@
 ## Project Description
 **live speech-2-text recognition** is a real-time, live caption speech-to-text recognition system that uses Wav2Vec model fine-tuned with the LJSpeech dataset. This project is designed to provide highly accurate live transcriptions, making it ideal for accessibility features, live events, and many other applications where real-time captioning is essential.
 
-## Table of Contents
-- [Installation](#installation)
-- [Usage](#usage)
-- [Model Training](#model-training)
-- [Transcription and Evaluation](#transcription-and-evaluation)
-- [Real-time Speech Recognition](#real-time-speech-recognition)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-
 ## Installation
 To set up the project, follow these steps:
 
