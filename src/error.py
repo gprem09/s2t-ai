@@ -1,5 +1,8 @@
 import json
 from compute_error import wer_cer
+import os
+
+csv_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'dataset', 'metadata.csv')
 
 def load_data_and_compute_bleu(metadata_path, transcriptions_file):
     with open(metadata_path, 'r', encoding='utf-8') as file:
@@ -13,7 +16,7 @@ def load_data_and_compute_bleu(metadata_path, transcriptions_file):
 
     wer_cer(gt_list, pred_list)
 
-metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
+metadata_path = csv_file_path
 transcriptions_file = 'transcriptions_finetuned.json'
 
 load_data_and_compute_bleu(metadata_path, transcriptions_file)

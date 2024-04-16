@@ -5,7 +5,7 @@ from dataset import load_ljspeech_data
 from torch.nn.utils.rnn import pad_sequence
 from tqdm import tqdm
 
-dataset_dir = "/Users/gprem/Desktop/s2t-ai/dataset"
+dataset_dir = "project/live_s2t_recognition/dataset"
 model_name = "facebook/wav2vec2-large-960h-lv60-self"
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 4
@@ -50,5 +50,5 @@ for epoch in range(epochs):
     avg_loss = total_loss / len(train_loader)
     print(f"Epoch {epoch+1}/{epochs}, Average Loss: {avg_loss:.5f}")
 
-model.save_pretrained("./wav2vec2_finetuned_model")
-processor.save_pretrained("./wav2vec2_finetuned_processor")
+model.save_pretrained("project/live_s2t_recognition/src/data/model/")
+processor.save_pretrained("project/live_s2t_recognition/src/data/processor/")

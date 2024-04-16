@@ -7,6 +7,12 @@ from tqdm import tqdm
 import librosa
 import transformers
 transformers.logging.set_verbosity_error()
+import os
+
+csv_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'dataset', 'metadata.csv')
+audio_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'dataset', 'wavs')
+model_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'model')
+processor_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'processor')
 
 class TextFormatter:
     @staticmethod
@@ -37,7 +43,7 @@ class Transcriber:
                 transcript = parts[2]
                 ground_truths[filename] = TextFormatter.correct_sentence(transcript)
 
-        for filename, transcript in tqdm(list(ground_truths.items())[:50], desc="Transcribing", unit="file"):
+        for filename, transcript in tqdm(list(ground_truths.items())[:5], desc="Transcribing", unit="file"):
             audio_path = audio_dir / f"{filename}.wav"
             try:
                 audio, _ = librosa.load(audio_path, sr=16000)
@@ -59,10 +65,10 @@ class Transcriber:
         print("Transcriptions saved to:", output_file)
 
 if __name__ == "__main__":
-    model_path = '/Users/gprem/Desktop/s2t-ai/src/data/model'
-    processor_path = '/Users/gprem/Desktop/s2t-ai/src/data/processor'
-    audio_dir = Path('/Users/gprem/Desktop/s2t-ai/dataset/wavs')
-    metadata_path = '/Users/gprem/Desktop/s2t-ai/dataset/metadata.csv'
+    model_path = model_file_path
+    processor_path = processor_file_path
+    audio_dir = Path(audio_file_path)
+    metadata_path = csv_file_path
     output_file = 'transcriptions_finetuned.json'
     
     transcriber = Transcriber(model_path, processor_path)

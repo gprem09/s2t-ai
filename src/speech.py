@@ -9,6 +9,10 @@ import jiwer
 import sacrebleu
 import re
 transformers.logging.set_verbosity_error()
+import os
+
+model_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'model')
+processor_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'data', 'processor')
 
 class AudioTranscriber:
     def __init__(self, model_path, processor_path):
@@ -47,7 +51,7 @@ class LiveAudioCapture:
 
     def capture_and_transcribe(self):
         with sr.Microphone() as source:
-            print("Checking for microphone... Please remain silent!")
+            print("Checking for microphone... SILENCE!")
             self.recognizer.adjust_for_ambient_noise(source, duration=5)
             print("Speak now!")
             while True:
@@ -67,8 +71,8 @@ class LiveAudioCapture:
                 
 
 if __name__ == "__main__":
-    model_path = '/Users/gprem/Desktop/s2t-ai/src/data/model'
-    processor_path = '/Users/gprem/Desktop/s2t-ai/src/data/processor'
+    model_path = model_file_path
+    processor_path = processor_file_path
     transcriber = AudioTranscriber(model_path, processor_path)
     live_audio = LiveAudioCapture(transcriber)
     try:
